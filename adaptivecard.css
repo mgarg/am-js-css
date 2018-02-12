@@ -8,7 +8,10 @@
     font-weight: normal;
     font-style: normal;
   }
-  
+
+  body {
+      background-color: black;
+  }
  .android-form input[type="text"]{
    border-top: none;
    border-left: none;
