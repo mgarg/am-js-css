@@ -24,7 +24,7 @@
   }
 
   a.ac-anchor {
-    text-decoration: none;
+    text-decoration: underline;
   }
   
   a.ac-anchor:link {
