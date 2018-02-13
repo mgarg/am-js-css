@@ -79,7 +79,7 @@ MessageCardRenderer.prototype.CustomizeFactSet = function(){
                 textBlock.size = this.hostConfig.factSet.title.size;
                 textBlock.color = this.hostConfig.factSet.title.color;
                 textBlock.isSubtle = this.hostConfig.factSet.title.isSubtle;
-                textBlock.weight = this.hostConfig.factSet.title.weight;
+                textBlock.weight = 1;
                 textBlock.wrap = this.hostConfig.factSet.title.wrap;
                 textBlock.spacing = 3;
 
@@ -217,7 +217,7 @@ MessageCardRenderer.prototype.registerAuthUrlActionExecuteCallback = function (c
 };
 
 MessageCardRenderer.prototype.renderCardJson = function(cardJson){
-    var messageCard = new MessageCard(cardConfigJson, this.os);
+    var messageCard = new MessageCard(defaultCardConfig, this.os);
     messageCard.parse(cardJson);
     var renderedCard = messageCard.render();
     var parent = document.querySelector(this.targetDom);
@@ -238,7 +238,7 @@ MessageCardRenderer.prototype.render = function () {
         console.log("Render entered");
         MessageCardRenderer.extendedMessageCardJson = JSON.parse(getMessageCard());
         MessageCardRenderer.messageCardJson = JSON.parse(MessageCardRenderer.extendedMessageCardJson['MessageCardSerialized']);
-        var messageCard = new MessageCard(cardConfigJson, this.os);
+        var messageCard = new MessageCard(defaultCardConfig, this.os);
         messageCard.parse(MessageCardRenderer.messageCardJson);
         var renderedCard = messageCard.render();
         var parent = document.querySelector(this.targetDom);
@@ -686,7 +686,130 @@ var addEvent = function(object, type, callback) {
     }
 };
 
-var cardConfigJson = {
+var defaultCardConfig = {
+    "supportsInteractivity": true,
+    "fontFamily": "Roboto-Regular",
+    "fontSizes": {
+        "small": 12,
+        "default": 14,
+        "medium": 16,
+        "large": 18,
+        "extraLarge": 20
+    },
+    "fontWeights": {
+        "lighter": 200,
+        "default": 400,
+        "bolder": 500
+    },
+    "imageSizes": {
+        "small": 40,
+        "medium": 80,
+        "large": 160
+    },
+    "containerStyles": {
+        "default": {
+            "fontColors": {
+                "default": {
+                    "normal": "#212121",
+                    "subtle": "#EE333333"
+                },
+                "accent": {
+                    "normal": "#8E8E93",
+                    "subtle": "#882E89FC"
+                },
+                "good": {
+                    "normal": "#54a254",
+                    "subtle": "#DD54a254"
+                },
+                "warning": {
+                    "normal": "#e69500",
+                    "subtle": "#DDe69500"
+                },
+                "attention": {
+                    "normal": "#cc3300",
+                    "subtle": "#DDcc3300"
+                }
+            },
+            "backgroundColor": "#FFFFFF"
+        },
+        "emphasis": {
+            "fontColors": {
+                "default": {
+                    "normal": "#2E89FC",
+                    "subtle": "#EE333333"
+                },
+                "accent": {
+                    "normal": "#2E89FC",
+                    "subtle": "#882E89FC"
+                },
+                "good": {
+                    "normal": "#54a254",
+                    "subtle": "#DD54a254"
+                },
+                "warning": {
+                    "normal": "#e69500",
+                    "subtle": "#DDe69500"
+                },
+                "attention": {
+                    "normal": "#cc3300",
+                    "subtle": "#DDcc3300"
+                }
+            },
+            "backgroundColor": "#08000000"
+        }
+    },
+    "spacing": {
+        "small": 2,
+        "default": 16,
+        "medium": 12,
+        "large": 30,
+        "extraLarge": 40,
+        "padding": 20
+    },
+    "separator": {
+        "lineThickness": 1,
+        "lineColor": "#EEEEEE"
+    },
+    "actions": {
+        "maxActions": 5,
+        "spacing": "Default",
+        "buttonSpacing": 10,
+        "showCard": {
+            "actionMode": "Popup",
+            "inlineTopMargin": 16,
+            "style": "Default"
+        },
+        "preExpandSingleShowCardAction": true,
+        "actionsOrientation": "Horizontal",
+        "actionAlignment": "Right"
+    },
+    "adaptiveCard": {
+        "allowCustomStyle": false
+    },
+    "imageSet": {
+        "imageSize": "Medium",
+        "maxImageHeight": "maxImageHeight"
+    },
+    "factSet": {
+        "title": {
+            "size": "Default",
+            "color": "Accent",
+            "isSubtle": false,
+            "weight": "Default",
+            "warp": true
+        },
+        "value": {
+            "size": "Medium",
+            "color": "Default",
+            "isSubtle": false,
+            "weight": "Default",
+            "warp": true
+        },
+        "spacing": 10
+    }
+};
+
+var compactCardConfig = {
     "supportsInteractivity": true,
     "fontFamily": "Roboto-Regular",
     "fontSizes": {
@@ -760,11 +883,11 @@ var cardConfigJson = {
     },
     "spacing": {
         "small": 2,
-        "default": 16,
-        "medium": 12,
+        "default": 8,
+        "medium": 6,
         "large": 30,
         "extraLarge": 40,
-        "padding": 20
+        "padding": 16
     },
     "separator": {
         "lineThickness": 1,

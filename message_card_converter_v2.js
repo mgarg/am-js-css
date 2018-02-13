@@ -4,37 +4,49 @@ function HostContainer(os) {
     this.allowHeroImage = true;
     this.allowImages = true;
     this.allowActionCard = true;
-    this.os = os;    
+    this.os = os;
 }
 
-function MessageCard(cardConfigJson, os) {
+function MessageCard(defaultCardConfig, compactCardConfig, os) {
     this.style = "default";
-    this.defaultCardConfig = cardConfigJson;
-    this.hostContainer = new HostContainer(os);    
+    this.defaultCardConfig = defaultCardConfig;
+    this.compactCardConfig = compactCardConfig;
+    this.hostContainer = new HostContainer(os);
 }
 
 MessageCard.prototype.parse = function (json) {
     this.summary = json["summary"];
     this.themeColor = json["themeColor"];
+    this.style == "default";
     if (json["style"]) {
         this.style = json["style"];
     }
 
     this._adaptiveCard = new AdaptiveCards.AdaptiveCard();
-    this._adaptiveCard.hostConfig = new AdaptiveCards.HostConfig(this.defaultCardConfig);
-    
+    this._adaptiveCard.preExpandSingleShowCardAction = true;
+    if(this.style == "compact"){
+        this._adaptiveCard.hostConfig = new AdaptiveCards.HostConfig(this.compactCardConfig);
+    }
+    else{
+        this._adaptiveCard.hostConfig = new AdaptiveCards.HostConfig(this.defaultCardConfig);
+    }
+
     if (json["title"] != undefined) {
         var textBlock = new AdaptiveCards.TextBlock();
         textBlock.text = json["title"];
-        textBlock.size = "large";
+        textBlock.size = 3;
         textBlock.wrap = true;
+        textBlock.weight = 2;
+        textBlock.spacing = 2;
         this._adaptiveCard.addItem(textBlock);
     }
 
     if (json["text"] != undefined) {
         var textBlock = new AdaptiveCards.TextBlock();
-        textBlock.text = json["text"],
+        textBlock.size = 2;
+        textBlock.text = json["text"];
         textBlock.wrap = true;
+        textBlock.spacing = 2;
         this._adaptiveCard.addItem(textBlock);
     }
 
@@ -108,7 +120,7 @@ function parseOpenUrlAction(json, host) {
             if(found.length >= 1)
             {
                 action.url = found[0]["uri"];
-            }    
+            }
         }
     }
     return action;
@@ -129,7 +141,7 @@ function parseViewAction(json, host) {
             if(found.length >= 1)
             {
                 action.url = found[0];
-            }    
+            }
         }
     }
     return action;
@@ -209,6 +221,7 @@ function parseShowCardAction(json, host) {
                     input = parseDateInput(jsonInput);
                     break;
                 case "MultiChoiceInput":
+                case "MultichoiceInput":
                     input = parseChoiceSetInput(jsonInput);
                     break;
             }
@@ -240,9 +253,6 @@ function parseActionSet(json, host) {
             case "HttpPOST":
                 action = parseHttpAction(jsonAction);
                 break;
-            case "InvokeAddInCommand":
-                action = parseInvokeAddInCommandAction(jsonAction);
-                break;
             case "ActionCard":
                 if (host.allowActionCard) {
                     action = parseShowCardAction(jsonAction, host);
@@ -255,28 +265,34 @@ function parseActionSet(json, host) {
     }
 
     var items = actionSet._actionCollection.items;
-	if(items.length > 3){
+    if(items.length > 3){
         var mobileRender = new MessageCardRenderer();
         var moreAction = new mobileRender.MoreAction();
-		for (var i = 2; i < items.length; i++){
-			moreAction.addAction(items[i]);
+        for (var i = 2; i < items.length; i++){
+            moreAction.addAction(items[i]);
         }
-        
+
         actionSet._actionCollection.items.splice(2,items.length - 2);
         actionSet.addAction(moreAction);
     }
-    	
+
     return actionSet;
 }
 
 function parseSection(json, host) {
     var section = new AdaptiveCards.Container();
-    section.separation = json["startGroup"] ? "strong" : "default";
+    if (typeof json["startGroup"] === "boolean" && json["startGroup"]) {
+        section.separator = true;
+    }
+
+    section.spacing = 2;
+
     if (json["title"] != undefined) {
         var textBlock = new AdaptiveCards.TextBlock();
         textBlock.text = json["title"];
-        textBlock.size = "medium";
+        textBlock.size = 3;
         textBlock.wrap = true;
+        textBlock.spacing = 2;
         section.addItem(textBlock);
     }
     if(json["style"] != null)
@@ -306,22 +322,29 @@ function parseSection(json, host) {
             textBlock_1.text = json["activityTitle"];
             textBlock_1.separation = "none";
             textBlock_1.wrap = true;
+            textBlock_1.size = 2;
+            textBlock_1.spacing = 2;
             column.addItem(textBlock_1);
         }
         if (json["activitySubtitle"] != null) {
             var textBlock_2 = new AdaptiveCards.TextBlock();
             textBlock_2.text = json["activitySubtitle"];
             textBlock_2.weight = "lighter";
-            textBlock_2.isSubtle = true;
+            textBlock_2.isSubtle = false;
             textBlock_2.separation = "none";
             textBlock_2.wrap = true;
+            textBlock_2.size = 1;
+            textBlock_2.color = 1;
+            textBlock_2.spacing = 0;
             column.addItem(textBlock_2);
         }
         if (json["activityText"] != null) {
             var textBlock_3 = new AdaptiveCards.TextBlock();
             textBlock_3.text = json["activityText"];
             textBlock_3.separation = "none";
+            textBlock_3.size = 1;
             textBlock_3.wrap = true;
+            textBlock_3.spacing = 0;
             column.addItem(textBlock_3);
         }
         columnSet.addColumn(column);
@@ -338,7 +361,9 @@ function parseSection(json, host) {
     if (json["text"] != undefined) {
         var text = new AdaptiveCards.TextBlock();
         text.text = json["text"];
+        text.size = 2;
         text.wrap = true;
+        text.spacing = 2;
         section.addItem(text);
     }
     if (host.allowFacts) {
