@@ -686,6 +686,11 @@ var addEvent = function(object, type, callback) {
     }
 };
 
+function showOriginalMessage() {
+    window.alert("hi");
+    console.log("hi");
+}
+
 var defaultCardConfig = {
     "supportsInteractivity": true,
     "fontFamily": "Roboto-Regular",
