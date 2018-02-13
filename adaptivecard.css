@@ -123,11 +123,9 @@ body {
     font-style: normal;
     font-weight: 900;
     margin: auto 0px auto 6px;
-    content: '\E70D';
   }
   
   .ac-pushButton.expandable.expanded:after {
-    content: '\E70E';
   }
   
   .ac-input {
