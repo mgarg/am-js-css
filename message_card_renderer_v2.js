@@ -764,7 +764,7 @@ var defaultCardConfig = {
         "medium": 12,
         "large": 30,
         "extraLarge": 40,
-        "padding": 20
+        "padding": 16
     },
     "separator": {
         "lineThickness": 1,
