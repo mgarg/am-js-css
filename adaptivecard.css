@@ -33,19 +33,19 @@ body {
   }
   
   a.ac-anchor:link {
-    color: #005A9E;
+    color: #0078d7;
   }
   
   a.ac-anchor:visited {
-    color: #005A9E;
+    color: #0078d7;
   }
   
   a.ac-anchor:link:active {
-    color: #004D84;
+    color: #0078d7;
   }
   
   a.ac-anchor:visited:active {
-    color: #004D84;
+    color: #0078d7;
   }
   
   .ac-container.ac-selectable, .ac-columnSet.ac-selectable {
