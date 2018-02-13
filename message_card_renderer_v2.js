@@ -27,7 +27,7 @@ MessageCardRenderer.prototype.CustomizeHttpAction = function() {
     };
 
     this.HttpAction.prototype.prepare = function (inputs) {
-        this._processedData = [];  
+        this._processedData = [];
         for (var i = 0; i < inputs.length; i++) {
             var inputValue = inputs[i].value;
             if (inputValue != null) {
@@ -65,7 +65,7 @@ MessageCardRenderer.prototype.CustomizeFactSet = function(){
             for (var i = 0; i < this.facts.length; i++) {
                 var trElement = document.createElement("tr");
                 if (i > 0) {
-                    trElement.style.marginTop = this.hostConfig.factSet.spacing.none + "px";
+                    trElement.style.marginTop = this.hostConfig.factSet.spacing + "px";
                 }
                 var tdElement = document.createElement("td");
                 tdElement.style.padding = "0";
@@ -81,17 +81,30 @@ MessageCardRenderer.prototype.CustomizeFactSet = function(){
                 textBlock.isSubtle = this.hostConfig.factSet.title.isSubtle;
                 textBlock.weight = this.hostConfig.factSet.title.weight;
                 textBlock.wrap = this.hostConfig.factSet.title.wrap;
-                //textBlock.spacing = AdaptiveCards.Enums.Spacing.None;
-                appendChild(tdElement, textBlock.render());
+                textBlock.spacing = 3;
+
+                var renderedElement = textBlock.render();
+
+                if (i > 0) {
+                    textBlock.separatorElement.style.flex = "0 0 auto";
+                    appendChild(tdElement, textBlock.separatorElement);
+                    appendChild(trElement, tdElement);
+                    appendChild(element, trElement);
+
+                    trElement = document.createElement("tr");
+                    tdElement = document.createElement("td");
+                }
+
+                appendChild(tdElement, renderedElement);
                 appendChild(trElement, tdElement);
                 appendChild(element, trElement);
-                
+
                 trElement = document.createElement("tr");
                 if (i > 0) {
-                    trElement.style.marginTop = this.hostConfig.factSet.spacing.none + "px";
+                    trElement.style.marginTop = this.hostConfig.factSet.spacing + "px";
                 }
                 tdElement = document.createElement("td");
-                tdElement.style.padding = "0px 0px 0px 10px";
+                tdElement.style.padding = "0";
                 tdElement.style.verticalAlign = "top";
                 textBlock = new AdaptiveCards.TextBlock();
                 textBlock.hostConfig = this.hostConfig;
@@ -101,8 +114,17 @@ MessageCardRenderer.prototype.CustomizeFactSet = function(){
                 textBlock.isSubtle = this.hostConfig.factSet.value.isSubtle;
                 textBlock.weight = this.hostConfig.factSet.value.weight;
                 textBlock.wrap = this.hostConfig.factSet.value.wrap;
-                //textBlock.spacing = AdaptiveCards.Enums.Spacing.None;
-                appendChild(tdElement, textBlock.render());
+                textBlock.spacing = 1;
+
+                renderedElement = textBlock.render();
+                textBlock.separatorElement.style.flex = "0 0 auto";
+                appendChild(tdElement, textBlock.separatorElement);
+                appendChild(trElement, tdElement);
+                appendChild(element, trElement);
+
+                trElement = document.createElement("tr");
+                tdElement = document.createElement("td");
+                appendChild(tdElement, renderedElement);
                 appendChild(trElement, tdElement);
                 appendChild(element, trElement);
             }
@@ -116,14 +138,14 @@ MessageCardRenderer.prototype.MoreAction = /** @class */ (function (_super) {
     function MoreAction() {
         var _this = _super.call(this) || this;
         _this.items = [];
-        this.title = "More";
+        this.title = "...";
         return _this;
     };
     MoreAction.prototype.getJsonTypeName = function () {
         return "Action.More";
     };
     MoreAction.prototype.validate = function () {
-        return this._actionCollection.validate();        
+        return this._actionCollection.validate();
     };
     MoreAction.prototype.addAction = function (action) {
         if (action != null) {
@@ -149,14 +171,14 @@ MessageCardRenderer.prototype.init = function () {
     MessageCardRenderer.selectedAction = null;
     MessageCardRenderer.popupWindow = null;
     MessageCardRenderer.messageCardHash = null;
-    
+
     this.CustomizeHttpAction();
     this.CustomizeFactSet();
 
     AdaptiveCards.AdaptiveCard.onExecuteAction = onExecuteAction;
-    
+
     // Action.Submit is not supported in Outlook
-    AdaptiveCards.AdaptiveCard.actionTypeRegistry.unregisterType("Action.Submit"); 
+    AdaptiveCards.AdaptiveCard.actionTypeRegistry.unregisterType("Action.Submit");
 
     // Customize http action for Outlook
     AdaptiveCards.AdaptiveCard.actionTypeRegistry.registerType("Action.Http", function () {
@@ -170,6 +192,10 @@ MessageCardRenderer.prototype.init = function () {
     AdaptiveCards.AdaptiveCard.actionTypeRegistry.registerType("Action.More", function(){
         return new this.MoreAction();
     }.bind(this));
+
+    addEvent(window, "resize", function(event) {
+        console.log('resized');
+    });
 };
 
 MessageCardRenderer.prototype.registerActionExecuteCallback = function (callbackName) {
@@ -197,7 +223,7 @@ MessageCardRenderer.prototype.renderCardJson = function(cardJson){
     var parent = document.querySelector(this.targetDom);
     if(parent){
         parent.innerHTML = '';
-        parent.appendChild(renderedCard);    
+        parent.appendChild(renderedCard);
     }
 
     var body = document.body;
@@ -218,17 +244,17 @@ MessageCardRenderer.prototype.render = function () {
         var parent = document.querySelector(this.targetDom);
         if(parent){
             parent.innerHTML = '';
-            parent.appendChild(renderedCard);    
+            parent.appendChild(renderedCard);
         }
-    
+
         var body = document.body;
         var html = document.documentElement;
-    
+
         var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
         onHeightChange(height);
         //MessageCardRenderer.renderCardJson(MessageCardRenderer.messageCardJson);
         var sha256 = new Hashes.SHA256;
-        MessageCardRenderer.messageCardHash = sha256.b64(MessageCardRenderer.extendedMessageCardJson['MessageCardSerialized']).toString();    
+        MessageCardRenderer.messageCardHash = sha256.b64(MessageCardRenderer.extendedMessageCardJson['MessageCardSerialized']).toString();
     }
     catch(e){
         console.log(e.message);
@@ -265,7 +291,7 @@ function buildAuthFailureStatusCard(text, url, weight, size) {
 };
 
 MessageCardRenderer.prototype.processActionResponse = function(responseJson, callback){
-    var showGenericError = false;    
+    var showGenericError = false;
     try{
         if(responseJson['removeCard'] === true){
             this.setCardVisible(false);
@@ -274,30 +300,30 @@ MessageCardRenderer.prototype.processActionResponse = function(responseJson, cal
             }
             return;
         }
-        else if(responseJson['hideCard'] === true){  
+        else if(responseJson['hideCard'] === true){
             this.setCardVisible(false);
             return;
         }
         else if(responseJson["innerErrorCode"] != null &&
-        responseJson["innerErrorCode"] === "ConnectedAccountNotFoundError"){
+            responseJson["innerErrorCode"] === "ConnectedAccountNotFoundError"){
             //ToDo:If it only outlook.office.com?
-            MessageCardRenderer.selectedAction.setStatus(buildAuthFailureStatusCard(responseJson["displayMessage"], "https://outlook.office.com" + responseJson.authenticationUrl, "normal", "large"));        
+            MessageCardRenderer.selectedAction.setStatus(buildAuthFailureStatusCard(responseJson["displayMessage"], "https://outlook.office.com" + responseJson.authenticationUrl, "normal", "large"));
         }
         else if(responseJson["refreshCard"] != null){
-            MessageCardRenderer.messageCardJson = responseJson["refreshCard"];
-            this.renderCardJson(responseJson["refreshCard"]);
+            MessageCardRenderer.messageCardJson = responseJson["refreshCardSerialized"];
+            this.renderCardJson(JSON.parse(responseJson["refreshCardSerialized"]));
             var sha256 = new Hashes.SHA256;
-            MessageCardRenderer.messageCardHash = sha256.b64(MessageCardRenderer.extendedMessageCardJson['refreshCardSerialized']).toString();    
+            MessageCardRenderer.messageCardHash = sha256.b64(MessageCardRenderer.extendedMessageCardJson['refreshCardSerialized']).toString();
         }
         else if(responseJson["displayMessage"] != null){
             this.displayActionStatusMessage(responseJson["displayMessage"]);
         }
         else{
             showGenericError = true;
-        }    
+        }
     }catch(e){
         showGenericError = true
-        //ToDo: Client Specific logging. Log e.Message and response string   
+        //ToDo: Client Specific logging. Log e.Message and response string
     }
 
     if(showGenericError === true){
@@ -308,7 +334,7 @@ MessageCardRenderer.prototype.processActionResponse = function(responseJson, cal
 function buildStatusCard(text, weight, size) {
     return {
         "type": "AdaptiveCard",
-        "body": [   
+        "body": [
             {
                 "type": "TextBlock",
                 "text": text,
@@ -334,12 +360,12 @@ function onExecuteAction(action) {
             MessageCardRenderer.onAuthUrlActionClicked(action.url);
         }
         else{
-            MessageCardRenderer.onOpenUrlActionSubmitted(action.url);            
+            MessageCardRenderer.onOpenUrlActionSubmitted(action.url);
         }
     }
     else if (action instanceof AdaptiveCards.HttpAction) {
 
-        var actionPayload = generateActionPayload(action.data, action.id);
+        var actionPayload = generateActionPayload(action.data, action.id, action);
 
         if (MessageCardRenderer.onActionSubmitted != null){
             MessageCardRenderer.onActionSubmitted(JSON.stringify(actionPayload));
@@ -352,7 +378,7 @@ function onExecuteAction(action) {
         }
 
         //showWorkingStatus();
-        MessageCardRenderer.selectedAction.setStatus(buildStatusCard("Working on it..", "normal", "small"));        
+        MessageCardRenderer.selectedAction.setStatus(buildStatusCard("Working on it..", "normal", "small"));
     }
 };
 
@@ -399,24 +425,24 @@ function showWorkingStatus(){
         ]
     }
 
-    MessageCardRenderer.selectedAction.setStatus(statusJson);  
+    MessageCardRenderer.selectedAction.setStatus(statusJson);
 }
 
 function handleMoreActionClick(action){
     showMoreActions(action);
 }
 
-function showCardAction(action){    
+function showCardAction(action){
     var NativeSupportedActions = ['DateInput', 'ChoiceSetInput'];
     if(action != null && action.card != null && action.card._items!= null && action.card._items.length == 2 &&
-       action.card._items[0].constructor != null && NativeSupportedActions.indexOf(action.card._items[0].constructor.name) !=-1 &&
-       action.card._items[1].constructor != null && action.card._items[1].constructor.name == "ActionSet" && 
-       action.card._items[1]._actionCollection != null && action.card._items[1]._actionCollection.items != null &&
-       action.card._items[1]._actionCollection.items.length == 1 && action.card._items[1]._actionCollection.items[0].constructor != null &&
-       action.card._items[1]._actionCollection.items[0].constructor.name == "HttpAction")
+        action.card._items[0].constructor != null && NativeSupportedActions.indexOf(action.card._items[0].constructor.name) !=-1 &&
+        action.card._items[1].constructor != null && action.card._items[1].constructor.name == "ActionSet" &&
+        action.card._items[1]._actionCollection != null && action.card._items[1]._actionCollection.items != null &&
+        action.card._items[1]._actionCollection.items.length == 1 && action.card._items[1]._actionCollection.items[0].constructor != null &&
+        action.card._items[1]._actionCollection.items[0].constructor.name == "HttpAction")
     {
         if(action.card._items[0].constructor.name == "DateInput"){
-            showDatePicker();           
+            showDatePicker();
         }
         else if(action.card._items[0].constructor.name == "ChoiceSetInput"){
             var choices = action.card._items[0].choices;
@@ -424,7 +450,7 @@ function showCardAction(action){
             {
                 item['display'] = item['title'];
             });
-            showChoicePicker(action);          
+            showChoicePicker(action);
         }
     }
     else{
@@ -432,7 +458,7 @@ function showCardAction(action){
     }
 }
 
-function getSwiftPotentialAction(json, actionId){
+function getSwiftPotentialAction(json, actionId, action){
     var potentialAction = null;
     if(json['sections'] != undefined)
     {
@@ -440,13 +466,13 @@ function getSwiftPotentialAction(json, actionId){
         {
             if(json['sections'][i]['potentialAction'] != undefined)
             {
-                potentialAction = SearchPotentialAction(json['sections'][i]['potentialAction'], actionId);
+                potentialAction = SearchPotentialAction(json['sections'][i]['potentialAction'], actionId, action);
             }
-        }        
+        }
     }
     if(potentialAction == null && json['potentialAction'] != undefined)
     {
-        potentialAction = SearchPotentialAction(json['potentialAction'], actionId);
+        potentialAction = SearchPotentialAction(json['potentialAction'], actionId, action);
     }
 
     if(potentialAction == null)
@@ -457,13 +483,18 @@ function getSwiftPotentialAction(json, actionId){
     return potentialAction;
 }
 
-function SearchPotentialAction(potentialActions, actionId)
+function SearchPotentialAction(potentialActions, actionId, action)
 {
     for(var i = 0; i < potentialActions.length; i++)
     {
         if(potentialActions[i]['@id'] == actionId)
         {
-            throw new Exception("Action not excepted here");
+            if(action != null)
+            {
+                MessageCardRenderer.selectedAction = action;
+            }
+
+            return potentialActions[i];
         }
         else if(potentialActions[i]['actions'] != null)
         {
@@ -473,22 +504,26 @@ function SearchPotentialAction(potentialActions, actionId)
                 {
                     return potentialActions[i]['actions'][j];
                 }
-            }    
+            }
         }
     }
 }
 
-function generateActionPayload(inputParameters, actionId)
+function generateActionPayload(inputParameters, actionId, action)
 {
     var actionPayload = {
-        'inputParameters' : inputParameters,
         'actionId' : actionId,
-        'potentialAction' : JSON.stringify(getSwiftPotentialAction(MessageCardRenderer.messageCardJson, actionId)),
+        'potentialAction' : JSON.stringify(getSwiftPotentialAction(MessageCardRenderer.messageCardJson, actionId, action)),
         'messageCardSignature' : MessageCardRenderer.extendedMessageCardJson['MessageCardSignature'],
         'connectorSenderGuid' : MessageCardRenderer.extendedMessageCardJson['ConnectorSenderGuid'],
         'providerAccountUniqueId' : MessageCardRenderer.extendedMessageCardJson['ProviderAccountUniqueId'],
         'messageCardHash' : MessageCardRenderer.messageCardHash,
-        'clientTelemetry' : {}    
+        'clientTelemetry' : {}
+    }
+
+    if(Object.keys(inputParameters).length >= 1)
+    {
+        actionPayload['inputParameters'] = inputParameters;
     }
 
     return actionPayload;
@@ -497,16 +532,16 @@ function generateActionPayload(inputParameters, actionId)
 function parseInputDate(inputDate)
 {
     var parsedInput = parseDatePickerInput(inputDate);
-    var inputParameters = 
-    [
-        {
-            'id' : MessageCardRenderer.selectedAction.card._items[0].id,
-            'value' : parsedInput
-        }
-    ]
+    var inputParameters =
+        [
+            {
+                'id' : MessageCardRenderer.selectedAction.card._items[0].id,
+                'value' : parsedInput
+            }
+        ]
 
     var actionPayload = generateActionPayload(inputParameters, MessageCardRenderer.selectedAction.card._items[1]._actionCollection.items[0].id);
-    if (MessageCardRenderer.onActionSubmitted != null){            
+    if (MessageCardRenderer.onActionSubmitted != null){
         MessageCardRenderer.onActionSubmitted(JSON.stringify(actionPayload));
     }
 
@@ -517,17 +552,17 @@ function parseInputDate(inputDate)
 
 function parseInputChoice(inputChoice)
 {
-    var parsedInput = parseChoicePickerInput(inputChoice);    
-    var inputParameters = 
-    [
-        {
-            'id' : MessageCardRenderer.selectedAction.card._items[0].id,
-            'value' : parsedInput
-        }
-    ]
+    var parsedInput = parseChoicePickerInput(inputChoice);
+    var inputParameters =
+        [
+            {
+                'id' : MessageCardRenderer.selectedAction.card._items[0].id,
+                'value' : parsedInput
+            }
+        ]
 
     var actionPayload = generateActionPayload(inputParameters, MessageCardRenderer.selectedAction.card._items[1]._actionCollection.items[0].id);
-    if (MessageCardRenderer.onActionSubmitted != null){        
+    if (MessageCardRenderer.onActionSubmitted != null){
         MessageCardRenderer.onActionSubmitted(JSON.stringify(actionPayload));
     }
 
@@ -609,7 +644,7 @@ function parseDatePickerInput(input){
 };
 
 function showChoicePicker(action){
-    return android.showChoicePicker(action.card._items[0].placeholder,JSON.stringify(action.card._items[0].choices), JSON.stringify([]), action.card._items[0].isMultiSelect, "parseInputChoice")    
+    return android.showChoicePicker(action.card._items[0].placeholder,JSON.stringify(action.card._items[0].choices), JSON.stringify([]), action.card._items[0].isMultiSelect, "parseInputChoice")
 };
 
 function parseChoicePickerInput(input){
@@ -618,7 +653,7 @@ function parseChoicePickerInput(input){
     }
     else if(input.length > 1){
         var output = input.map(function(elem){
-            return elem.value;        
+            return elem.value;
         }).join(";");
         return output + ";";
     }
@@ -632,24 +667,34 @@ function showMoreActions(action){
         json.push({'id' : action.items[i].title, 'display' : action.items[i].title})
     }
 
-    return android.showChoicePicker("More",JSON.stringify(json), JSON.stringify([]), false, "parseInputActionChoice")
+    return android.showMoreItems("More",JSON.stringify(json), JSON.stringify([]), false, "parseInputActionChoice") ;
+    //return android.showChoicePicker("More",JSON.stringify(json), JSON.stringify([]), false, "parseInputActionChoice")
 }
 
 function parseActionChoiceInput(input){
     return input[0]["display"];
 }
 
-
+var addEvent = function(object, type, callback) {
+    if (object == null || typeof(object) == 'undefined') return;
+    if (object.addEventListener) {
+        object.addEventListener(type, callback, false);
+    } else if (object.attachEvent) {
+        object.attachEvent("on" + type, callback);
+    } else {
+        object["on"+type] = callback;
+    }
+};
 
 var cardConfigJson = {
     "supportsInteractivity": true,
-    "fontFamily": "Segoe UI",
+    "fontFamily": "Roboto-Regular",
     "fontSizes": {
         "small": 12,
         "default": 14,
-        "medium": 17,
-        "large": 21,
-        "extraLarge": 26
+        "medium": 16,
+        "large": 18,
+        "extraLarge": 20
     },
     "fontWeights": {
         "lighter": 200,
@@ -669,7 +714,7 @@ var cardConfigJson = {
                     "subtle": "#EE333333"
                 },
                 "accent": {
-                    "normal": "#8e8e93",
+                    "normal": "#8E8E93",
                     "subtle": "#882E89FC"
                 },
                 "good": {
@@ -714,10 +759,9 @@ var cardConfigJson = {
         }
     },
     "spacing": {
-        "none": 0,
-        "small": 3,
-        "default": 8,
-        "medium": 20,
+        "small": 2,
+        "default": 16,
+        "medium": 12,
         "large": 30,
         "extraLarge": 40,
         "padding": 20
@@ -733,11 +777,11 @@ var cardConfigJson = {
         "showCard": {
             "actionMode": "Popup",
             "inlineTopMargin": 16,
-            "style": "Emphasis"
+            "style": "Default"
         },
-        "preExpandSingleShowCardAction": false,
+        "preExpandSingleShowCardAction": true,
         "actionsOrientation": "Horizontal",
-        "actionAlignment": "Left"
+        "actionAlignment": "Right"
     },
     "adaptiveCard": {
         "allowCustomStyle": false
@@ -751,11 +795,11 @@ var cardConfigJson = {
             "size": "Default",
             "color": "Accent",
             "isSubtle": false,
-            "weight": "Bolder",
+            "weight": "Default",
             "warp": true
         },
         "value": {
-            "size": "Default",
+            "size": "Medium",
             "color": "Default",
             "isSubtle": false,
             "weight": "Default",
