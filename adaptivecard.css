@@ -65,9 +65,9 @@ body {
     vertical-align: middle;
     cursor: default;
     overflow: hidden;
-    font-family: sans-serif-medium;
+    font-family: roboto;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 500;
     padding: 3px 10px 4px 10px;
     -webkit-user-select: none;
        -moz-user-select: none;
@@ -81,38 +81,37 @@ body {
   }
   
   .ac-pushButton:hover {
-    background-color: #0078D7;
-    color: white;
-    border: 1px solid #0078D7;
+    background-color: #f8f8f8;
+    color: #0078D7;
   }
   
   .ac-pushButton:disable {
-    background-color: #464B93;
-    color: white;
-    border: 1px solid #464B93;
+    background-color: #f8f8f8;
+    color: #0078d7;
+    border: none;
   }
 
   .ac-pushButton:active {
-    background-color: #464B93;
-    color: white;
-    border: 1px solid #464B93;
+    background-color: #f8f8f8;
+    color: #0078d7;
+    border: none;
   }
   
   .ac-pushButton.subdued {
-    color: #666666;
-    border: 1px solid #EEEEEE;
+    color: #0078d7;
+    border: none;
   }
   
   .ac-pushButton.subdued:hover {
-    background-color: #0078D7;
-    color: white;
-    border: 1px solid #0078D7;
+    background-color: #f8f8f8;
+    color: #0078d7;
+    border: none;
   }
   
   .ac-pushButton.expanded {
-    background-color: #0078D7;
-    color: white;
-    border: 1px solid #0078D7;
+    background-color: #f8f8f8;
+    color: #0078d7;
+    border: none;
   }
   
   .ac-pushButton.expandable:after {
