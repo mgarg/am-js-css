@@ -687,8 +687,6 @@ var addEvent = function(object, type, callback) {
 };
 
 function hideShowOriginalMessage() {
-    window.alert("hi");
-    console.log("hi");
     var div = document.getElementById("originalBodyContainer");
     div.style.display = div.style.display == "none" ? "block" : "none";
 }
