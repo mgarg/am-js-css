@@ -687,14 +687,15 @@ var addEvent = function(object, type, callback) {
 };
 
 function hideShowOriginalMessage() {
-    var div = document.getElementById("originalBodyContainer");
-    if (div.style.display === "none") {
-        div.innerHTML= "Hide original message";
-        div.style.display = "block";
+    var bodyConatinerDiv = document.getElementById("originalBodyContainer");
+    var showHideMessageDiv = document.getElementById("showHideOriginalMessage");
+    if (bodyConatinerDiv.style.display === "none") {
+        showHideMessageDiv.innerHTML= "Hide original message";
+        bodyConatinerDiv.style.display = "block";
     }
     else {
-        div.innerHTML = "Show original message";
-        div.style.display = "none";
+        showHideMessageDiv.innerHTML = "Show original message";
+        bodyConatinerDiv.style.display = "none";
     }
 }
 
