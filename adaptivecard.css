@@ -144,3 +144,10 @@
     border: 1px solid #DDDDDD;
     padding: 4px 8px 4px 8px;
   }  
+
+ #showHideOriginalMessage {
+     font-family: "Roboto-Regular";
+     font-size: 12px;
+     color: #0078d7;
+     align: right;
+ }
