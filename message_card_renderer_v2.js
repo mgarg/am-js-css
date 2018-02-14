@@ -688,7 +688,14 @@ var addEvent = function(object, type, callback) {
 
 function hideShowOriginalMessage() {
     var div = document.getElementById("originalBodyContainer");
-    div.style.display = div.style.display == "none" ? "block" : "none";
+    if (div.style.display === "none") {
+        div.innerText = "Hide original message";
+        div.style.display = "block";
+    }
+    else {
+        div.innerText = "Show original message";
+        div.style.display = "none";
+    }
 }
 
 var defaultCardConfig = {
