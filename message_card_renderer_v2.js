@@ -689,11 +689,11 @@ var addEvent = function(object, type, callback) {
 function hideShowOriginalMessage() {
     var div = document.getElementById("originalBodyContainer");
     if (div.style.display === "none") {
-        div.innerText = "Hide original message";
+        div.innerHTML= "Hide original message";
         div.style.display = "block";
     }
     else {
-        div.innerText = "Show original message";
+        div.innerHTML = "Show original message";
         div.style.display = "none";
     }
 }
