@@ -1,3 +1,6 @@
+body {
+    background-color: #f8f8f8;
+}
 .ac-image.ac-selectable {
     cursor: pointer;
   }
@@ -151,4 +154,9 @@
      color: #0078d7;
      text-align: end;
      padding: 16px;
+ }
+
+ #originalBodyContainer {
+     margin: -16px;
+     background-color: white;
  }
