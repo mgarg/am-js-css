@@ -354,7 +354,7 @@ function parseSection(json, host) {
         var heroImage = json["heroImage"];
         if (heroImage != undefined) {
             var image_1 = parsePicture(heroImage);
-            image_1.size = 1;
+            image_1.size = 0;
             section.addItem(image_1);
         }
     }
