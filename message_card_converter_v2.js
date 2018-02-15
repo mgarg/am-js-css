@@ -68,8 +68,8 @@ MessageCard.prototype.render = function () {
 };
 
 function parsePicture(json, defaultSize, defaultStyle) {
-    if (defaultSize === void 0) { defaultSize = "medium"; }
-    if (defaultStyle === void 0) { defaultStyle = "normal"; }
+    if (defaultSize === void 0) { defaultSize = 3; }
+    if (defaultStyle === void 0) { defaultStyle = 0; }
     var picture = new AdaptiveCards.Image();
     picture.url = json["image"];
     picture.size = json["size"] ? json["size"] : defaultSize;
@@ -80,7 +80,7 @@ function parseImageSet(json) {
     var imageSet = new AdaptiveCards.ImageSet();
     var imageArray = json;
     for (var i = 0; i < imageArray.length; i++) {
-        var image = parsePicture(imageArray[i], "small");
+        var image = parsePicture(imageArray[i], 2);
         imageSet.addImage(image);
     }
     return imageSet;
