@@ -308,8 +308,8 @@ function parseSection(json, host) {
             column = new AdaptiveCards.Column();
             column.size = "auto";
             var image = new AdaptiveCards.Image();
-            image.size = json["activityImageSize"] ? json["activityImageSize"] : "small";
-            image.style = "person";
+            image.size = json["activityImageSize"] ? json["activityImageSize"] : 2;
+            image.style = json["activityImageStyle"] ? json["activityImageStyle"] : 1;
             image.url = json["activityImage"];
             column.addItem(image);
             columnSet.addColumn(column);
