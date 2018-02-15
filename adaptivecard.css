@@ -161,3 +161,9 @@ body {
      margin: -16px;
      background-color: white;
  }
+
+ #androidContainer {
+     margin: -8px;
+     border-radius: 5px;
+     border: 1px solid #e1e1e1;
+ }
