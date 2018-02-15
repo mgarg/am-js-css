@@ -839,7 +839,7 @@ var compactCardConfig = {
     },
     "imageSizes": {
         "small": 40,
-        "medium": 80,
+        "medium": 98,
         "large": 160
     },
     "containerStyles": {

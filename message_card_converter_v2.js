@@ -80,7 +80,7 @@ function parseImageSet(json) {
     var imageSet = new AdaptiveCards.ImageSet();
     var imageArray = json;
     for (var i = 0; i < imageArray.length; i++) {
-        var image = parsePicture(imageArray[i], 2);
+        var image = parsePicture(imageArray[i], 3);
         imageSet.addImage(image);
     }
     return imageSet;
