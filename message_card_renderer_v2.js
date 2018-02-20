@@ -1058,7 +1058,7 @@ var compactCardConfig = {
     "separator": {
         "lineThickness": 1,
         "lineColor": "#EEEEEE",
-        "spacing": 16
+        "spacing": 32
     },
     "actions": {
         "maxActions": 5,
