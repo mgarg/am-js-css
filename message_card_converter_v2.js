@@ -21,6 +21,7 @@ MessageCard.prototype.parse = function (json) {
     if (json["style"]) {
         this.style = json["style"];
     }
+    this.hideOriginalBody = json["hideOriginalBody"];
 
     this._adaptiveCard = new AdaptiveCards.AdaptiveCard();
     this._adaptiveCard.preExpandSingleShowCardAction = true;
@@ -177,6 +178,7 @@ function parseTextInput(json) {
     parseInput(input, json);
     input.placeholder = json["title"];
     input.isMultiline = json["isMultiline"];
+    input.maxLength = json["maxLength"];
     return input;
 }
 

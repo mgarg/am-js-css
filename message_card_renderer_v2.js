@@ -217,7 +217,7 @@ MessageCardRenderer.prototype.registerAuthUrlActionExecuteCallback = function (c
 };
 
 MessageCardRenderer.prototype.renderCardJson = function(cardJson){
-    var messageCard = new MessageCard(defaultCardConfig, this.os);
+    var messageCard = new MessageCard(defaultCardConfig, compactCardConfig, this.os);
     messageCard.parse(cardJson);
     var renderedCard = messageCard.render();
     var parent = document.querySelector(this.targetDom);
@@ -238,7 +238,7 @@ MessageCardRenderer.prototype.render = function () {
         console.log("Render entered");
         MessageCardRenderer.extendedMessageCardJson = JSON.parse(getMessageCard());
         MessageCardRenderer.messageCardJson = JSON.parse(MessageCardRenderer.extendedMessageCardJson['MessageCardSerialized']);
-        var messageCard = new MessageCard(defaultCardConfig, this.os);
+        var messageCard = new MessageCard(defaultCardConfig, compactCardConfig, this.os);
         messageCard.parse(MessageCardRenderer.messageCardJson);
         var renderedCard = messageCard.render();
         var parent = document.querySelector(this.targetDom);
@@ -252,9 +252,10 @@ MessageCardRenderer.prototype.render = function () {
 
         var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
         onHeightChange(height);
-        //MessageCardRenderer.renderCardJson(MessageCardRenderer.messageCardJson);
+
+        var extendedMessageCardJson = JSON.parse(getOriginalMessageCard());
         var sha256 = new Hashes.SHA256;
-        MessageCardRenderer.messageCardHash = sha256.b64(MessageCardRenderer.extendedMessageCardJson['MessageCardSerialized']).toString();
+        MessageCardRenderer.messageCardHash = sha256.b64(extendedMessageCardJson['MessageCardSerialized']).toString();
     }
     catch(e){
         console.log(e.message);
@@ -433,7 +434,7 @@ function handleMoreActionClick(action){
 }
 
 function showCardAction(action){
-    var NativeSupportedActions = ['DateInput', 'ChoiceSetInput'];
+    var NativeSupportedActions = ['DateInput', 'ChoiceSetInput', 'TextInput'];
     if(action != null && action.card != null && action.card._items!= null && action.card._items.length == 2 &&
         action.card._items[0].constructor != null && NativeSupportedActions.indexOf(action.card._items[0].constructor.name) !=-1 &&
         action.card._items[1].constructor != null && action.card._items[1].constructor.name == "ActionSet" &&
@@ -451,6 +452,9 @@ function showCardAction(action){
                 item['display'] = item['title'];
             });
             showChoicePicker(action);
+        }
+        else if(action.card._items[0].constructor.name == "TextInput"){
+            showTextInputPopup(action);
         }
     }
     else{
@@ -570,6 +574,24 @@ function parseInputChoice(inputChoice)
     //showWorkingStatus();
 }
 
+function parseInputText(inputText)
+{
+    var parsedInput = inputText;
+    var inputParameters =
+        [
+            {
+                'id' : MessageCardRenderer.selectedAction.card._items[0].id,
+                'value' : parsedInput
+            }
+        ]
+
+    var actionPayload = generateActionPayload(inputParameters, MessageCardRenderer.selectedAction.card._items[1]._actionCollection.items[0].id);
+    if (MessageCardRenderer.onActionSubmitted != null){
+        MessageCardRenderer.onActionSubmitted(JSON.stringify(actionPayload));
+    }
+
+    MessageCardRenderer.selectedAction.setStatus(buildStatusCard("Working on it", "normal", "large"));
+}
 
 function getSelectedActionFromList(title, actionList){
     return actionList.filter(
@@ -631,6 +653,10 @@ function getMessageCard(){
     return android.getCard();
 };
 
+function getOriginalMessageCard(){
+    return android.getOriginalCard();
+}
+
 function onHeightChange(height){
     return android.onHeightChange(height);
 };
@@ -646,6 +672,10 @@ function parseDatePickerInput(input){
 function showChoicePicker(action){
     return android.showChoicePicker(action.card._items[0].placeholder,JSON.stringify(action.card._items[0].choices), JSON.stringify([]), action.card._items[0].isMultiSelect, "parseInputChoice")
 };
+
+function showTextInputPopup(action){
+    return android.showCommentPopup("parseInputText")
+}
 
 function parseChoicePickerInput(input){
     if (input.length == 1) {
@@ -901,6 +931,129 @@ var compactCardConfig = {
         "large": 30,
         "extraLarge": 40,
         "padding": 16
+    },
+    "separator": {
+        "lineThickness": 1,
+        "lineColor": "#EEEEEE"
+    },
+    "actions": {
+        "maxActions": 5,
+        "spacing": "Default",
+        "buttonSpacing": 10,
+        "showCard": {
+            "actionMode": "Popup",
+            "inlineTopMargin": 16,
+            "style": "Default"
+        },
+        "preExpandSingleShowCardAction": true,
+        "actionsOrientation": "Horizontal",
+        "actionAlignment": "Right"
+    },
+    "adaptiveCard": {
+        "allowCustomStyle": false
+    },
+    "imageSet": {
+        "imageSize": "Medium",
+        "maxImageHeight": "maxImageHeight"
+    },
+    "factSet": {
+        "title": {
+            "size": "Default",
+            "color": "Accent",
+            "isSubtle": false,
+            "weight": "Default",
+            "warp": true
+        },
+        "value": {
+            "size": "Medium",
+            "color": "Default",
+            "isSubtle": false,
+            "weight": "Default",
+            "warp": true
+        },
+        "spacing": 10
+    }
+};
+
+var compactCardConfig = {
+    "supportsInteractivity": true,
+    "fontFamily": "Roboto-Regular",
+    "fontSizes": {
+        "small": 12,
+        "default": 14,
+        "medium": 16,
+        "large": 18,
+        "extraLarge": 20
+    },
+    "fontWeights": {
+        "lighter": 200,
+        "default": 400,
+        "bolder": 600
+    },
+    "imageSizes": {
+        "small": 40,
+        "medium": 80,
+        "large": 160
+    },
+    "containerStyles": {
+        "default": {
+            "fontColors": {
+                "default": {
+                    "normal": "#212121",
+                    "subtle": "#EE333333"
+                },
+                "accent": {
+                    "normal": "#8E8E93",
+                    "subtle": "#882E89FC"
+                },
+                "good": {
+                    "normal": "#54a254",
+                    "subtle": "#DD54a254"
+                },
+                "warning": {
+                    "normal": "#e69500",
+                    "subtle": "#DDe69500"
+                },
+                "attention": {
+                    "normal": "#cc3300",
+                    "subtle": "#DDcc3300"
+                }
+            },
+            "backgroundColor": "#FFFFFF"
+        },
+        "emphasis": {
+            "fontColors": {
+                "default": {
+                    "normal": "#2E89FC",
+                    "subtle": "#EE333333"
+                },
+                "accent": {
+                    "normal": "#2E89FC",
+                    "subtle": "#882E89FC"
+                },
+                "good": {
+                    "normal": "#54a254",
+                    "subtle": "#DD54a254"
+                },
+                "warning": {
+                    "normal": "#e69500",
+                    "subtle": "#DDe69500"
+                },
+                "attention": {
+                    "normal": "#cc3300",
+                    "subtle": "#DDcc3300"
+                }
+            },
+            "backgroundColor": "#08000000"
+        }
+    },
+    "spacing": {
+        "small": 2,
+        "default": 8,
+        "medium": 6,
+        "large": 30,
+        "extraLarge": 40,
+        "padding": 20
     },
     "separator": {
         "lineThickness": 1,

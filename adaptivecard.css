@@ -167,7 +167,3 @@ body {
      border: 1px solid #e1e1e1;
      overflow: hidden;
  }
-
-input{
-    -webkit-user-select: text;
-}
