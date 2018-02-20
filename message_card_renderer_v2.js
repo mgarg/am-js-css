@@ -228,7 +228,7 @@ MessageCardRenderer.prototype.renderCardJson = function(cardJson){
 
     var body = document.body;
     var html = document.documentElement;
-
+    body.style.padding = "8px";
     var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
     onHeightChange(height);
 }
