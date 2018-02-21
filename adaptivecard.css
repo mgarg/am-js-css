@@ -48,14 +48,20 @@ body {
   
   .ac-container.ac-selectable, .ac-columnSet.ac-selectable {
     padding: 0px;
+    outline: none;
+    border: none;
   }
   
   .ac-container.ac-selectable:hover, .ac-columnSet.ac-selectable:hover {
     background-color: rgba(0, 0, 0, 0.1);
+      outline: none;
+      border: none;
   }
   
   .ac-container.ac-selectable:active, .ac-columnSet.ac-selectable:active {
     background-color: rgba(0, 0, 0, 0.15);
+      outline: none;
+      border: none;
   }
   
   .ac-pushButton {
