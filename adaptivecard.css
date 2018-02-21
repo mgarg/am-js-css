@@ -89,29 +89,39 @@ body {
     background-color: #f8f8f8;
     color: #0078d7;
     border: none;
+      outline: none;
+
   }
 
   .ac-pushButton:active {
     background-color: #f8f8f8;
     color: #0078d7;
     border: none;
+      outline: none;
+
   }
   
   .ac-pushButton.subdued {
     color: #0078d7;
     border: none;
+      outline: none;
+
   }
   
   .ac-pushButton.subdued:hover {
     background-color: #f8f8f8;
     color: #0078d7;
     border: none;
+      outline: none;
+
   }
   
   .ac-pushButton.expanded {
     background-color: #f8f8f8;
     color: #0078d7;
     border: none;
+      outline: none;
+
   }
   
   .ac-pushButton.expandable:after {
