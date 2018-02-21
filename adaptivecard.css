@@ -173,11 +173,11 @@ body {
   
   .ac-input.ac-textInput {
     resize: none;
-    outline: none;
   }
   
   .ac-input.ac-textInput.ac-multiline {
     height: 3em;
+      outline: none;
   }
   
   .ac-input.ac-textInput, .ac-input.ac-numberInput, .ac-input.ac-dateInput, .ac-input.ac-timeInput {
