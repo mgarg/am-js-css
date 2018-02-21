@@ -76,6 +76,8 @@ body {
     gravity:center_horizontal;
     border: none;
       text-transform: uppercase;
+      outline: none;
+
   }
   
   .ac-pushButton:hover {
@@ -148,7 +150,6 @@ body {
     font-size: 16px;
     line-height: 24px;
     color: #212121;
-    outline: none;
   }
   
   .ac-input.ac-textInput {
