@@ -164,7 +164,7 @@ body {
   
   .ac-input.ac-textInput, .ac-input.ac-numberInput, .ac-input.ac-dateInput, .ac-input.ac-timeInput, .ac-input.ac-multichoiceInput {
     border: none;
-    border-bottom: #8e8e93;
+    border-bottom: #8e8e93 1px solid;
     padding: 4px 8px 4px 8px;
   }  
 
