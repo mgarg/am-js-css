@@ -252,6 +252,7 @@ MessageCardRenderer.prototype.render = function () {
         body.style.cssText = 'padding:8px !important';
 
         var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+        hideShowOriginalMessage();
         onHeightChange(height);
 
         var extendedMessageCardJson = JSON.parse(getOriginalMessageCard());
@@ -733,7 +734,7 @@ function hideShowOriginalMessage() {
     var html = document.documentElement;
 
     var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-    onHeightChange(height);
+    //onHeightChange(height);
 }
 
 var defaultCardConfig = {
