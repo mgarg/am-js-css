@@ -144,9 +144,10 @@ body {
     animation: ripple 1s ease-out;
 }
   .ac-input {
-    font-family: "Segoe UI", sans-serif;
-    font-size: 14px;
-    color: black;
+    font-family: "Roboto-Regular";
+    font-size: 16px;
+    line-height: 24px;
+    color: #212121;
   }
   
   .ac-input.ac-textInput {
@@ -162,7 +163,8 @@ body {
   }
   
   .ac-input.ac-textInput, .ac-input.ac-numberInput, .ac-input.ac-dateInput, .ac-input.ac-timeInput, .ac-input.ac-multichoiceInput {
-    border: 1px solid #DDDDDD;
+    border: none;
+    border-bottom: #8e8e93;
     padding: 4px 8px 4px 8px;
   }  
 
