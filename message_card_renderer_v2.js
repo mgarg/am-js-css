@@ -823,7 +823,7 @@ var defaultCardConfig = {
     "actions": {
         "maxActions": 5,
         "spacing": "Default",
-        "buttonSpacing": 10,
+        "buttonSpacing": 8,
         "showCard": {
             "actionMode": "Popup",
             "inlineTopMargin": 16,
