@@ -45,7 +45,10 @@ body {
   a.ac-anchor:visited:active {
     color: #0078d7;
   }
-  
+
+  .ac-container{
+      outline: none;
+  }
   .ac-container.ac-selectable, .ac-columnSet.ac-selectable {
     padding: 0px;
     outline: none;
