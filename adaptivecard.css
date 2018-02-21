@@ -148,6 +148,7 @@ body {
     font-size: 16px;
     line-height: 24px;
     color: #212121;
+    outline: none;
   }
   
   .ac-input.ac-textInput {
@@ -155,7 +156,7 @@ body {
   }
   
   .ac-input.ac-textInput.ac-multiline {
-    max-height: 72px;
+    height: 3em;
   }
   
   .ac-input.ac-textInput, .ac-input.ac-numberInput, .ac-input.ac-dateInput, .ac-input.ac-timeInput {
