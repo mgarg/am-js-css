@@ -176,7 +176,8 @@ body {
   }
   
   .ac-input.ac-textInput.ac-multiline {
-    height: 4.5em;
+      min-height: 1.5em;
+    max-heigh: 4.5em;
       outline: none;
   }
   
