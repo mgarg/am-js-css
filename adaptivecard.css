@@ -173,6 +173,7 @@ body {
   
   .ac-input.ac-textInput {
     resize: none;
+    outline: none;
   }
   
   .ac-input.ac-textInput.ac-multiline {
