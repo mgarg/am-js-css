@@ -249,7 +249,7 @@ MessageCardRenderer.prototype.render = function () {
         var body = document.body;
         var html = document.documentElement;
 
-        body.style.padding = "8px";
+        body.style.cssText = 'padding:8px !important';
 
         var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
         onHeightChange(height);
