@@ -218,8 +218,7 @@ body {
  }
 
  input[type=radio] {
-     position: absolute;
-     visibility: hidden;
+
  }
 
  input[type=radio].check {
@@ -246,10 +245,10 @@ body {
      margin: auto;
  }
 
-input[type=radio]:checked ~ .check {
+input[type=radio]:checked {
     border: 2px solid #0067d8;
 }
 
-input[type=radio]:checked ~ .check::before{
+input[type=radio]:checked::before{
     background: #0067d8;
 }
