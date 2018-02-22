@@ -130,7 +130,7 @@ body {
     color: #0078d7;
     border: none;
       outline: none;
-
+      animation: ripple 1s ease-out;
   }
   
   .ac-pushButton.expandable:after {
@@ -162,7 +162,7 @@ body {
 }
 
 .ac-pushButton:focus:not(:active)::after {
-    animation: ripple 1s ease-out;
+
 }
   .ac-input {
     font-family: "Roboto-Regular";
