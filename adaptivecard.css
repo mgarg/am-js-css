@@ -218,10 +218,6 @@ body {
  }
 
  input[type=radio] {
-
- }
-
- input[type=radio].check {
      display: block;
      position: absolute;
      border: 2px solid #010101;
@@ -233,22 +229,11 @@ body {
      z-index: 5;
  }
 
- input[type=radio].check::before {
-     display: block;
-     position: absolute;
-     content: '';
-     border-radius: 100%;
-     height: 24px;
-     width: 24px;
-     top: 14px;
-     left: 10px;
-     margin: auto;
- }
 
-input:checked {
+input[type=radio]:checked {
     border: 2px solid #0067d8;
 }
 
-input:checked::before{
+input[type=radio]:checked::before{
     background: #0067d8;
 }
