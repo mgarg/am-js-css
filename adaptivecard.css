@@ -179,16 +179,22 @@ body {
       min-height: 1.5em;
       height: 4.5em;
       outline: none;
+      border: none;
+      border-bottom: #8e8e93 1px solid;
+      padding-top: 14px;
+      padding-bottom: 10px;
   }
-  
+
+.ac-input.ac-textInput.ac-multiline:focus {
+    border-bottom: #0078d7 1px solid;
+}
+
   .ac-input.ac-textInput, .ac-input.ac-numberInput, .ac-input.ac-dateInput, .ac-input.ac-timeInput {
     height: 31px;
   }
   
   .ac-input.ac-textInput, .ac-input.ac-numberInput, .ac-input.ac-dateInput, .ac-input.ac-timeInput, .ac-input.ac-multichoiceInput {
     border: none;
-    border-bottom: #8e8e93 1px solid;
-    padding: 4px 8px 4px 8px;
   }  
 
  #showHideOriginalMessage {
