@@ -133,6 +133,40 @@ MessageCardRenderer.prototype.CustomizeFactSet = function(){
     };
 }
 
+MessageCardRenderer.prototype.ImageSet = function(){
+    AdaptiveCards.ImageSet.call(this);
+}
+
+MessageCardRenderer.prototype.CustomizeImageSet = function(){
+    this.ImageSet.prototype = Object.create(AdaptiveCards.ImageSet.prototype);
+    this.ImageSet.prototype.internalRender = function () {
+        var element = null;
+        if (this._images.length > 0) {
+            element = document.createElement("div");
+            element.style.display = "flex";
+            element.style.flexWrap = "wrap";
+            for (var i = 0; i < this._images.length; i++) {
+                var renderedImage = this._images[i].render();
+                renderedImage.style.display = "inline-flex";
+                renderedImage.style.margin = "0px";
+                if(i%2 == 1)
+                {
+                    renderedImage.style.marginLeft = "8px";
+                }
+
+                if(i > 1)
+                {
+                    renderedImage.style.marginTop = "8px";
+                }
+
+                renderedImage.style.maxHeight = this.hostConfig.imageSet.maxImageHeight + "px";
+                appendChild(element, renderedImage);
+            }
+        }
+        return element;
+    };
+}
+
 MessageCardRenderer.prototype.MoreAction = /** @class */ (function (_super) {
     __extends(MoreAction, _super);
     function MoreAction() {
@@ -174,6 +208,7 @@ MessageCardRenderer.prototype.init = function () {
 
     this.CustomizeHttpAction();
     this.CustomizeFactSet();
+    this.CustomizeImageSet();
 
     AdaptiveCards.AdaptiveCard.onExecuteAction = onExecuteAction;
 
@@ -187,6 +222,11 @@ MessageCardRenderer.prototype.init = function () {
 
     AdaptiveCards.AdaptiveCard.elementTypeRegistry.registerType("FactSet", function() {
         return new this.FactSet();
+    }.bind(this));
+
+
+    AdaptiveCards.AdaptiveCard.elementTypeRegistry.registerType("ImageSet", function() {
+        return new this.ImageSet();
     }.bind(this));
 
     AdaptiveCards.AdaptiveCard.actionTypeRegistry.registerType("Action.More", function(){
@@ -246,17 +286,17 @@ MessageCardRenderer.prototype.render = function () {
             parent.appendChild(renderedCard);
         }
 
-        var body = document.body;
-        var html = document.documentElement;
-
-        body.style.cssText = 'padding:8px !important';
-        hideShowOriginalMessage();
-        var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-        onHeightChange(height);
-
         var extendedMessageCardJson = JSON.parse(getOriginalMessageCard());
         var sha256 = new Hashes.SHA256;
         MessageCardRenderer.messageCardHash = sha256.b64(extendedMessageCardJson['MessageCardSerialized']).toString();
+
+        var body = document.body;
+        var html = document.documentElement;
+
+        var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+        onHeightChange(height);
+        body.style.cssText = 'padding:8px !important';
+        hideShowOriginalMessage();
     }
     catch(e){
         console.log(e.message);
@@ -309,8 +349,28 @@ MessageCardRenderer.prototype.processActionResponse = function(responseJson, cal
         else if(responseJson["innerErrorCode"] != null &&
             responseJson["innerErrorCode"] === "ConnectedAccountNotFoundError"){
             //ToDo:If it only outlook.office.com?
-            MessageCardRenderer.selectedAction.setStatus(buildAuthFailureStatusCard(responseJson["displayMessage"], "https://outlook.office.com" + responseJson.authenticationUrl, "normal", "large"));
+            var text = responseJson["displayMessage"] + " [Please login to continue](https://outlook.office.com" + responseJson.authenticationUrl + ")";
+
+            var statusJson = {
+                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                "type": "AdaptiveCard",
+                "version": "1.0",
+                "body": [
+                    {
+                        "type": "TextBlock",
+                        "text": text,
+                        "size": "default",
+                        "spacing": "small",
+                        "color": "good",
+                        "wrap": true
+                    }
+                ]
+            }
+
+            MessageCardRenderer.selectedAction.setStatus(statusJson);
+            //MessageCardRenderer.selectedAction.setStatus(buildAuthFailureStatusCard(responseJson["displayMessage"], "https://outlook.office.com" + responseJson.authenticationUrl, "normal", "large"));
         }
+
         else if(responseJson["refreshCard"] != null){
             MessageCardRenderer.messageCardJson = responseJson["refreshCardSerialized"];
             this.renderCardJson(JSON.parse(responseJson["refreshCardSerialized"]));
@@ -318,7 +378,25 @@ MessageCardRenderer.prototype.processActionResponse = function(responseJson, cal
             MessageCardRenderer.messageCardHash = sha256.b64(MessageCardRenderer.extendedMessageCardJson['refreshCardSerialized']).toString();
         }
         else if(responseJson["displayMessage"] != null){
-            this.displayActionStatusMessage(responseJson["displayMessage"]);
+            var statusJson = {
+                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                "type": "AdaptiveCard",
+                "version": "1.0",
+                "body": [
+                    {
+                        "type": "TextBlock",
+                        "text": responseJson["displayMessage"],
+                        "size": "default",
+                        "spacing": "small",
+                        "color": "good",
+                        "wrap": true
+                    }
+                ]
+            }
+
+            MessageCardRenderer.selectedAction.setStatus(statusJson);
+            //this.displayActionStatusMessage(responseJson["displayMessage"]);
+            //showWorkingStatus(displayMessage, "https://messagecarddemo.blob.core.windows.net/messagecard/Success.png");
         }
         else{
             showGenericError = true;
@@ -379,12 +457,54 @@ function onExecuteAction(action) {
             MessageCardRenderer.popupWindow = null;
         }
 
-        //showWorkingStatus();
-        MessageCardRenderer.selectedAction.setStatus(buildStatusCard("Working on it..", "normal", "small"));
+        showWorkingStatus("Working on it...", "https://messagecarddemo.blob.core.windows.net/messagecard/LoadingSpinner.gif");
+        //MessageCardRenderer.selectedAction.setStatus(buildStatusCard("Working on it..", "normal", "small"));
     }
 };
 
-function showWorkingStatus(){
+function showWorkingStatus(text, url){
+    var statusJson = {
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+        "type": "AdaptiveCard",
+        "version": "1.0",
+        "body": [
+            {
+                "type": "ColumnSet",
+                "columns": [
+                    {
+                        "type": "Column",
+                        "items": [
+                            {
+                                "type": "TextBlock",
+                                "text": text,
+                                "size": "default",
+                                "spacing": "small",
+                                "color": "good",
+                                "wrap": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Column",
+                        "width": "auto",
+                        "items": [
+                            {
+                                "type": "Image",
+                                "url": url,
+                                "pixelWidth" : 20
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+
+    MessageCardRenderer.selectedAction.setStatus(statusJson);
+}
+
+
+/*function showWorkingStatus(){
     var statusJson = {
         "type": "AdaptiveCard",
         "body": [
@@ -428,10 +548,14 @@ function showWorkingStatus(){
     }
 
     MessageCardRenderer.selectedAction.setStatus(statusJson);
-}
+}*/
 
 function handleMoreActionClick(action){
     showMoreActions(action);
+}
+
+function hideStatusCard(){
+    MessageCardRenderer.selectedAction._actionCollection.hideStatusCard();
 }
 
 function showCardAction(action){
@@ -473,6 +597,11 @@ function getSwiftPotentialAction(json, actionId, action){
             {
                 potentialAction = SearchPotentialAction(json['sections'][i]['potentialAction'], actionId, action);
             }
+
+            if(potentialAction != null)
+            {
+                return potentialAction;
+            }
         }
     }
     if(potentialAction == null && json['potentialAction'] != undefined)
@@ -507,6 +636,10 @@ function SearchPotentialAction(potentialActions, actionId, action)
             {
                 if(potentialActions[i]['actions'][j]['@id'] == actionId)
                 {
+                    if(MessageCardRenderer.selectedAction == null)
+                    {
+                        MessageCardRenderer.selectedAction = action;
+                    }
                     return potentialActions[i]['actions'][j];
                 }
             }
@@ -550,9 +683,8 @@ function parseInputDate(inputDate)
         MessageCardRenderer.onActionSubmitted(JSON.stringify(actionPayload));
     }
 
-    MessageCardRenderer.selectedAction.setStatus(buildStatusCard("Working on it", "normal", "large"));
-
-    //showWorkingStatus();
+    //MessageCardRenderer.selectedAction.setStatus(buildStatusCard("Working on it", "normal", "large"));
+    showWorkingStatus("Working on it...", "https://messagecarddemo.blob.core.windows.net/messagecard/LoadingSpinner.gif");
 }
 
 function parseInputChoice(inputChoice)
@@ -571,8 +703,8 @@ function parseInputChoice(inputChoice)
         MessageCardRenderer.onActionSubmitted(JSON.stringify(actionPayload));
     }
 
-    MessageCardRenderer.selectedAction.setStatus(buildStatusCard("Working on it", "normal", "large"));
-    //showWorkingStatus();
+    //MessageCardRenderer.selectedAction.setStatus(buildStatusCard("Working on it", "normal", "large"));
+    showWorkingStatus("Working on it...", "https://messagecarddemo.blob.core.windows.net/messagecard/LoadingSpinner.gif");
 }
 
 function parseInputText(inputText)
@@ -591,7 +723,8 @@ function parseInputText(inputText)
         MessageCardRenderer.onActionSubmitted(JSON.stringify(actionPayload));
     }
 
-    MessageCardRenderer.selectedAction.setStatus(buildStatusCard("Working on it", "normal", "large"));
+    //MessageCardRenderer.selectedAction.setStatus(buildStatusCard("Working on it", "normal", "large"));
+    showWorkingStatus("Working on it...", "https://messagecarddemo.blob.core.windows.net/messagecard/LoadingSpinner.gif");
 }
 
 function getSelectedActionFromList(title, actionList){
@@ -768,8 +901,8 @@ var defaultCardConfig = {
                     "subtle": "#882E89FC"
                 },
                 "good": {
-                    "normal": "#54a254",
-                    "subtle": "#DD54a254"
+                    "normal": "#777777",
+                    "subtle": "#777777"
                 },
                 "warning": {
                     "normal": "#e69500",
@@ -793,8 +926,8 @@ var defaultCardConfig = {
                     "subtle": "#882E89FC"
                 },
                 "good": {
-                    "normal": "#54a254",
-                    "subtle": "#DD54a254"
+                    "normal": "#777777",
+                    "subtle": "#777777"
                 },
                 "warning": {
                     "normal": "#e69500",
@@ -805,14 +938,14 @@ var defaultCardConfig = {
                     "subtle": "#DDcc3300"
                 }
             },
-            "backgroundColor": "#08000000"
+            "backgroundColor": "#E1E1E1"
         }
     },
     "spacing": {
         "small": 2,
         "default": 16,
         "medium": 12,
-        "large": 30,
+        "large": 32,
         "extraLarge": 40,
         "padding": 16
     },
