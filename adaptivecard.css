@@ -197,6 +197,9 @@ body {
     border: none;
   }  
 
+  .ac-input, .ac-multichoiceInput {
+
+  }
  #showHideOriginalMessage {
      font-family: "Roboto-Regular";
      font-size: 12px;
