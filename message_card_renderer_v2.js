@@ -457,8 +457,9 @@ function onExecuteAction(action) {
             MessageCardRenderer.popupWindow = null;
         }
 
-        onHeightChange(1);
         showWorkingStatus("Working on it...", "https://messagecarddemo.blob.core.windows.net/messagecard/LoadingSpinner.gif");
+        onHeightChange(1);
+
         //MessageCardRenderer.selectedAction.setStatus(buildStatusCard("Working on it..", "normal", "small"));
     }
 };
