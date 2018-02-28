@@ -827,9 +827,9 @@ function getHeight() {
                 var textNodes = [];
                 for(var i=0; i<element.childNodes.length; i++) {
                     var node = element.childNodes[i];
-                    if(node.nodeType === Node.TEXT_NODE){
+                    //if(node.nodeType === Node.TEXT_NODE){
                         textNodes.push(node);
-                    }
+                   // }
                 }
 
                 for(i =0; i<textNodes.length; i++){
