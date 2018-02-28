@@ -892,8 +892,8 @@ function breadthFirst(rootElement, callback) {
 }
 
 function onHeightChange(height){
-    height = getHeight();
-    return android.onHeightChange(height);
+    var height1 = getHeight();
+    return android.onHeightChange(height1);
 };
 
 function showDatePicker() {
