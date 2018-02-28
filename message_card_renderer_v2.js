@@ -892,10 +892,10 @@ function getOriginalMessageCard(){
 //     }
 // }
 //
-// function onHeightChange(height){
-//     var height1 = getHeight();
-//     return android.onHeightChange(height1);
-// };
+function onHeightChange(height){
+    var height1 = getHeight();
+    return android.onHeightChange(height1);
+};
 
 function showDatePicker() {
     return android.showDatePicker(0, "parseInputDate");
