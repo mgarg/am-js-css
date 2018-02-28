@@ -793,108 +793,109 @@ function getOriginalMessageCard(){
     return android.getOriginalCard();
 }
 
-function getHeight() {
-    // This is an intensive operation. Unfortunately, the body might not have the right height.
-    // So we have to compute the size of all elements.
-
-    // Compute body vertical padding
-    var bodyStyle = window.getComputedStyle(document.body);
-    var bodyPaddingTop = parseFloat(bodyStyle.paddingTop);
-    bodyPaddingTop = isNaN(bodyPaddingTop) ? 0 : bodyPaddingTop;
-    var bodyPaddingBottom = parseFloat(bodyStyle.paddingBottom);
-    bodyPaddingBottom = isNaN(bodyPaddingBottom) ? 0 : bodyPaddingBottom;
-
-    // Start with body padding top
-    var maxY = bodyPaddingTop;
-
-    // Go through all elements.
-    breadthFirst(document.body, function(element) {
-        if (element === document.body) {
-            // Do not take body into account because it will always take the full height of the webview
-            // and therefore not represent the actual max height
-            // However, we have to take into account its text nodes
-            if (document.createRange == null) {
-                return true;
-            }
-
-            var range = document.createRange();
-
-            if (range.getBoundingClientRect == null) {
-                return true;
-            }
-
-            if (element.hasChildNodes()) {
-                var textNodes = [];
-                for(var i=0; i<element.childNodes.length; i++) {
-                    var node = element.childNodes[i];
-                    //if(node.nodeType === Node.TEXT_NODE){
-                        textNodes.push(node);
-                   // }
-                }
-
-                for(i =0; i<textNodes.length; i++){
-                    var textNode = textNodes[i];
-                    range.selectNodeContents(textNode);
-                    maxY = Math.max(maxY, range.getBoundingClientRect().bottom);
-                }
-
-            }
-
-            return true;
-        }
-
-        var elementStyle = window.getComputedStyle(element);
-
-        if (elementStyle.display === 'none') {
-            // Neither take this element nor its children into account
-            return false;
-        }
-
-        if (elementStyle.visibility === 'hidden') {
-            // Neither take this element nor its children into account
-            // While non visible elements still take DOM space, we don't want to use them
-            // If we need to show that space, another element below it will be responsible of maxY
-            return false;
-        }
-
-        var elementBounds = ElementManager.getAbsoluteBoundsOfElement(element);
-
-        // Take maxY
-        maxY = Math.max(maxY, elementBounds.outer.bottom);
-
-        // Check if need to take children into account
-        if (elementStyle.overflowY === 'hidden' || elementStyle.overflowY === 'scroll') {
-            return false;
-        }
-
-        return true;
-    });
-
-    // Add padding bottom of body
-    maxY += bodyPaddingBottom;
-
-    return maxY;
-}
-
-function breadthFirst(rootElement, callback) {
-    var queue = [rootElement];
-    while (queue.length > 0) {
-        var element = queue.shift();
-
-        if (!(element instanceof Element)) {
-            continue;
-        }
-
-        if (callback(element) && element.children != null) {
-            queue = queue.concat((element.children).slice());
-        }
-    }
-}
-
-function onHeightChange(height){
-    var height1 = getHeight();
-    return android.onHeightChange(height1);
-};
+// function getHeight() {
+//     // This is an intensive operation. Unfortunately, the body might not have the right height.
+//     // So we have to compute the size of all elements.
+//
+//     // Compute body vertical padding
+//     console.log("getHeight entered");
+//     var bodyStyle = window.getComputedStyle(document.body);
+//     var bodyPaddingTop = parseFloat(bodyStyle.paddingTop);
+//     bodyPaddingTop = isNaN(bodyPaddingTop) ? 0 : bodyPaddingTop;
+//     var bodyPaddingBottom = parseFloat(bodyStyle.paddingBottom);
+//     bodyPaddingBottom = isNaN(bodyPaddingBottom) ? 0 : bodyPaddingBottom;
+//
+//     // Start with body padding top
+//     var maxY = bodyPaddingTop;
+//
+//     // Go through all elements.
+//     breadthFirst(document.body, function(element) {
+//         if (element === document.body) {
+//             // Do not take body into account because it will always take the full height of the webview
+//             // and therefore not represent the actual max height
+//             // However, we have to take into account its text nodes
+//             if (document.createRange == null) {
+//                 return true;
+//             }
+//
+//             var range = document.createRange();
+//
+//             if (range.getBoundingClientRect == null) {
+//                 return true;
+//             }
+//
+//             if (element.hasChildNodes()) {
+//                 var textNodes = [];
+//                 for(var i=0; i<element.childNodes.length; i++) {
+//                     var node = element.childNodes[i];
+//                     //if(node.nodeType === Node.TEXT_NODE){
+//                         textNodes.push(node);
+//                    // }
+//                 }
+//
+//                 for(i =0; i<textNodes.length; i++){
+//                     var textNode = textNodes[i];
+//                     range.selectNodeContents(textNode);
+//                     maxY = Math.max(maxY, range.getBoundingClientRect().bottom);
+//                 }
+//
+//             }
+//
+//             return true;
+//         }
+//
+//         var elementStyle = window.getComputedStyle(element);
+//
+//         if (elementStyle.display === 'none') {
+//             // Neither take this element nor its children into account
+//             return false;
+//         }
+//
+//         if (elementStyle.visibility === 'hidden') {
+//             // Neither take this element nor its children into account
+//             // While non visible elements still take DOM space, we don't want to use them
+//             // If we need to show that space, another element below it will be responsible of maxY
+//             return false;
+//         }
+//
+//         var elementBounds = ElementManager.getAbsoluteBoundsOfElement(element);
+//
+//         // Take maxY
+//         maxY = Math.max(maxY, elementBounds.outer.bottom);
+//
+//         // Check if need to take children into account
+//         if (elementStyle.overflowY === 'hidden' || elementStyle.overflowY === 'scroll') {
+//             return false;
+//         }
+//
+//         return true;
+//     });
+//
+//     // Add padding bottom of body
+//     maxY += bodyPaddingBottom;
+//
+//     return maxY;
+// }
+//
+// function breadthFirst(rootElement, callback) {
+//     var queue = [rootElement];
+//     while (queue.length > 0) {
+//         var element = queue.shift();
+//
+//         if (!(element instanceof Element)) {
+//             continue;
+//         }
+//
+//         if (callback(element) && element.children != null) {
+//             queue = queue.concat((element.children).slice());
+//         }
+//     }
+// }
+//
+// function onHeightChange(height){
+//     var height1 = getHeight();
+//     return android.onHeightChange(height1);
+// };
 
 function showDatePicker() {
     return android.showDatePicker(0, "parseInputDate");
