@@ -229,7 +229,7 @@ MessageCardRenderer.prototype.renderCardJson = function(cardJson){
     var body = document.body;
     var html = document.documentElement;
     var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-    onHeightChange(height);
+    //onHeightChange(height);
 }
 
 MessageCardRenderer.prototype.render = function () {
@@ -252,7 +252,7 @@ MessageCardRenderer.prototype.render = function () {
         body.style.cssText = 'padding:8px !important';
         hideShowOriginalMessage();
         var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-        onHeightChange(height);
+        //onHeightChange(height);
 
         var extendedMessageCardJson = JSON.parse(getOriginalMessageCard());
         var sha256 = new Hashes.SHA256;
