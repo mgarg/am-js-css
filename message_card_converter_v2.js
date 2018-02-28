@@ -59,7 +59,7 @@ MessageCard.prototype.parse = function (json) {
         }
     }
     if (json["potentialAction"] != undefined) {
-        var actionSet = parseActionSet(json["potentialAction"], this.hostContainer);
+        var actionSet = parseActionSet(json["potentialAction"], this.hostContainer, true);
         actionSet.actionStyle = "link";
         this._adaptiveCard.addItem(actionSet);
     }
@@ -78,10 +78,14 @@ function parsePicture(json, defaultSize, defaultStyle) {
 }
 
 function parseImageSet(json) {
-    var imageSet = new AdaptiveCards.ImageSet();
+    var mobileRender = new MessageCardRenderer();
+    var imageSet = new mobileRender.ImageSet();
+    var mobileWidth = window.innerWidth  || document.body.clientWidth;
+    var totalWidth = mobileWidth - 60;
     var imageArray = json;
     for (var i = 0; i < imageArray.length; i++) {
         var image = parsePicture(imageArray[i], 3);
+        image.pixelWidth = totalWidth/2;
         imageSet.addImage(image);
     }
     return imageSet;
@@ -239,7 +243,7 @@ function parseShowCardAction(json, host) {
     return showCardAction;
 }
 
-function parseActionSet(json, host) {
+function parseActionSet(json, host, flag) {
     var actionSet = new AdaptiveCards.ActionSet();
     var actionArray = json;
     for (var i = 0; i < actionArray.length; i++) {
@@ -250,6 +254,7 @@ function parseActionSet(json, host) {
                 action = parseOpenUrlAction(jsonAction, host);
                 break;
             case "ViewAction":
+
                 action = parseViewAction(jsonAction, host);
                 break;
             case "HttpPOST":
@@ -266,16 +271,35 @@ function parseActionSet(json, host) {
         }
     }
 
-    var items = actionSet._actionCollection.items;
-    if(items.length > 3){
-        var mobileRender = new MessageCardRenderer();
-        var moreAction = new mobileRender.MoreAction();
-        for (var i = 2; i < items.length; i++){
-            moreAction.addAction(items[i]);
+    if(flag == true)
+    {
+        var mobileWidth = window.innerWidth  || document.body.clientWidth;
+        var totalWidth = mobileWidth - 60;
+        var items = actionSet._actionCollection.items;
+        var width = 0;
+        var j = items.length;
+        for(var i = 0; i < items.length; i++)
+        {
+            var elementWidth = getTextWidth(items[i].title, "14pt Roboto-Regular");
+            width = width + elementWidth + 2*8;
+            if(width > totalWidth)
+            {
+                j = i;
+                break;
+            }
         }
 
-        actionSet._actionCollection.items.splice(2,items.length - 2);
-        actionSet.addAction(moreAction);
+        if( j < items.length)
+        {
+            var mobileRender = new MessageCardRenderer();
+            var moreAction = new mobileRender.MoreAction();
+            for (var i = j; i < items.length; i++){
+                moreAction.addAction(items[i]);
+            }
+
+            actionSet._actionCollection.items.splice(j,items.length - j);
+            actionSet.addAction(moreAction);
+        }
     }
 
     return actionSet;
@@ -287,7 +311,7 @@ function parseSection(json, host) {
         section.separator = true;
     }
 
-    section.spacing = 2;
+    section.spacing = 4;
 
     if (json["title"] != undefined) {
         var textBlock = new AdaptiveCards.TextBlock();
@@ -306,7 +330,7 @@ function parseSection(json, host) {
         var columnSet = new AdaptiveCards.ColumnSet();
         var column;
         // Image column
-        if (json["activityImage"] != null) {
+        if (json["activityImage"] != null && json["activityImage"] != "") {
             column = new AdaptiveCards.Column();
             column.size = "auto";
             var image = new AdaptiveCards.Image();
@@ -318,7 +342,7 @@ function parseSection(json, host) {
         }
         // Text column
         column = new AdaptiveCards.Column;
-        column.size = "stretch";
+        column.width = "stretch";
         if (json["activityTitle"] != null) {
             var textBlock_1 = new AdaptiveCards.TextBlock();
             textBlock_1.text = json["activityTitle"];
@@ -381,9 +405,18 @@ function parseSection(json, host) {
         }
     }
     if (json["potentialAction"] != undefined) {
-        var actionSet = parseActionSet(json["potentialAction"], host);
+        var actionSet = parseActionSet(json["potentialAction"], host, true);
         actionSet.actionStyle = "link";
         section.addItem(actionSet);
     }
     return section;
+}
+
+function getTextWidth(text, font) {
+    // re-use canvas object for better performance
+    var canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
+    var context = canvas.getContext("2d");
+    context.font = font;
+    var metrics = context.measureText(text);
+    return metrics.width;
 }

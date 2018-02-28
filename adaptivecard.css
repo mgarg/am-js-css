@@ -197,6 +197,28 @@ body {
     border: none;
   }  
 
+  .ac-input, .ac-multichoiceInput {
+    background-color: white;
+      color: #a8a8ac;
+      font-size: 16px;
+      line-height: 1.5em;
+      -webkit-appearance: none;
+      outline: none;
+  }
+
+  .ac-input[type=radio] {
+      display: block;
+      border: 2px solid #010101;
+      border-radius: 100%;
+      height: 25px;
+      width: 25px;
+      top: 30px;
+      left: 20px;
+      z-index: 5;
+  }
+  .ac-input:checked {
+      border: 2px solid #0067d8
+  }
  #showHideOriginalMessage {
      font-family: "Roboto-Regular";
      font-size: 12px;
@@ -217,23 +239,23 @@ body {
      overflow: hidden;
  }
 
- input[type=radio] {
-     display: block;
-     position: absolute;
-     border: 2px solid #010101;
-     border-radius: 100%;
-     height: 25px;
-     width: 25px;
-     top: 30px;
-     left: 20px;
-     z-index: 5;
- }
+ /*input[type=radio] {*/
+     /*display: block;*/
+     /*border: 2px solid #010101;*/
+     /*border-radius: 100%;*/
+     /*height: 25px;*/
+     /*width: 25px;*/
+     /*top: 30px;*/
+     /*left: 20px;*/
+     /*z-index: 5;*/
+ /*}*/
 
 
-input[type=radio]:checked {
-    border: 2px solid #0067d8;
-}
+/*input[type=radio]:checked {*/
+    /*border: 2px solid #0067d8;*/
+/*}*/
 
-input[type=radio]:checked::before{
-    background: #0067d8;
-}
+
+/*input[type=radio]:checked::before{*/
+    /*background: #0067d8;*/
+/*}*/
