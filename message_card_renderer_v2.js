@@ -11,7 +11,6 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 
-var _globalHeight;
 function MessageCardRenderer(targetDom, os) {
     this.targetDom = targetDom || "content";
     this.os = os;
@@ -269,8 +268,8 @@ MessageCardRenderer.prototype.renderCardJson = function(cardJson){
 
     var body = document.body;
     var html = document.documentElement;
-    _globalHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-    //onHeightChange(height);
+    var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+    onHeightChange(height);
 }
 
 MessageCardRenderer.prototype.render = function () {
@@ -294,8 +293,8 @@ MessageCardRenderer.prototype.render = function () {
         var body = document.body;
         var html = document.documentElement;
 
-        _globalHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-        //onHeightChange(height);
+        var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+        onHeightChange(height);
         body.style.cssText = 'padding:8px !important';
         hideShowOriginalMessage();
     }
@@ -465,9 +464,9 @@ function onExecuteAction(action) {
     }
     var body = document.body;
     var html = document.documentElement;
-    var currentHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-    onHeightChange(currentHeight - _globalHeight);
-    _globalHeight = currentHeight;
+    var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+    onHeightChange(height);
+
 };
 
 function showWorkingStatus(text, url){
@@ -800,7 +799,6 @@ function getOriginalMessageCard(){
 }
 
 function onHeightChange(height){
-    //var height1 = getHeight();
     return android.onHeightChange(height);
 };
 
@@ -875,7 +873,7 @@ function hideShowOriginalMessage() {
     var html = document.documentElement;
 
     var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-    onHeightChange(height);
+    //onHeightChange(height);
 }
 
 var defaultCardConfig = {
