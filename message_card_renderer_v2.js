@@ -800,8 +800,8 @@ function getOriginalMessageCard(){
 }
 
 function onHeightChange(height){
-    var height1 = getHeight();
-    return android.onHeightChange(height1);
+    //var height1 = getHeight();
+    return android.onHeightChange(height);
 };
 
 function showDatePicker() {
