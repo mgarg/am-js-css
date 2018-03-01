@@ -11,6 +11,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 
+var _globalHeight;
 function MessageCardRenderer(targetDom, os) {
     this.targetDom = targetDom || "content";
     this.os = os;
@@ -268,8 +269,8 @@ MessageCardRenderer.prototype.renderCardJson = function(cardJson){
 
     var body = document.body;
     var html = document.documentElement;
-    var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-    onHeightChange(height);
+    _globalHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+    //onHeightChange(height);
 }
 
 MessageCardRenderer.prototype.render = function () {
@@ -293,8 +294,8 @@ MessageCardRenderer.prototype.render = function () {
         var body = document.body;
         var html = document.documentElement;
 
-        var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-        onHeightChange(height);
+        _globalHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+        //onHeightChange(height);
         body.style.cssText = 'padding:8px !important';
         hideShowOriginalMessage();
     }
@@ -459,12 +460,14 @@ function onExecuteAction(action) {
 
         showWorkingStatus("Working on it...", "https://messagecarddemo.blob.core.windows.net/messagecard/LoadingSpinner.gif");
 
-        var body = document.body;
-        var html = document.documentElement;
-        var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-        onHeightChange(height);
+
         //MessageCardRenderer.selectedAction.setStatus(buildStatusCard("Working on it..", "normal", "small"));
     }
+    var body = document.body;
+    var html = document.documentElement;
+    var currentHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+    onHeightChange(currentHeight - _globalHeight);
+    _globalHeight = currentHeight;
 };
 
 function showWorkingStatus(text, url){
