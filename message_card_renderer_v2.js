@@ -466,8 +466,22 @@ function onExecuteAction(action) {
     var html = document.documentElement;
     var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
     onHeightChange(height);
+    scrollToElement("originalBodyContainer");
 
 };
+
+function scrollToElement(id) {
+    var elem = document.getElementById(id);
+    var x = 0;
+    var y = 0;
+
+    while (elem != null) {
+        x += elem.offsetLeft;
+        y += elem.offsetTop;
+        elem = elem.offsetParent;
+    }
+    window.scrollTo(x, y);
+}
 
 function showWorkingStatus(text, url){
     var statusJson = {
