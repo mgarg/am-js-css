@@ -466,7 +466,7 @@ function onExecuteAction(action) {
     var html = document.documentElement;
     var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
     onHeightChange(height);
-    window.scrollTo(0, document.body.scrollHeight);
+    //window.scrollTo(0, document.body.scrollHeight);
     //scrollToElement("originalBodyContainer");
 
 };
