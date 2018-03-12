@@ -444,8 +444,8 @@ function buildStatusCard(text, weight, size) {
 
 function onExecuteAction(action) {
     var messageCardRenderer = new MessageCardRenderer();
-    var potentialAction = this.getSwiftPotentialAction(this.messageCardJson, action.id, action);
-    android.executeActionTrial(potentialAction);
+    var potentialAction = getSwiftPotentialAction(MessageCardRenderer.messageCardJson, action.id, action);
+    android.executeActionTrial(JSON.stringify(potentialAction));
     var body = document.body;
     var html = document.documentElement;
     var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
