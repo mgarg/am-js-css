@@ -429,7 +429,8 @@ function onExecuteAction(action) {
     var messageCardRenderer = new MessageCardRenderer();
     if (action instanceof AdaptiveCards.ShowCardAction){
         MessageCardRenderer.selectedAction = action;
-        showCardAction(action);
+        android.executeActionTrial(action);
+        //showCardAction(action);
     }
     else if(action instanceof messageCardRenderer.MoreAction){
         MessageCardRenderer.selectedAction = action;
