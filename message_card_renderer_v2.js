@@ -444,7 +444,7 @@ function buildStatusCard(text, weight, size) {
 
 function onExecuteAction(action) {
     var messageCardRenderer = new MessageCardRenderer();
-    var potentialAction = this.getSwiftPotentialAction(this.messageCardJson, action.id);
+    var potentialAction = this.getSwiftPotentialAction(this.messageCardJson, action.id, action);
     android.executeActionTrial(potentialAction);
     var body = document.body;
     var html = document.documentElement;
