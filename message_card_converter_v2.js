@@ -27,19 +27,27 @@ MessageCard.prototype.parse = function (json) {
     this._adaptiveCard.preExpandSingleShowCardAction = true;
     if(this.style == "compact"){
         this._adaptiveCard.hostConfig = new AdaptiveCards.HostConfig(this.compactCardConfig);
+        this.hostContainer.allowCardTitle = false;
+        this.hostContainer.allowFacts = false;
+        this.hostContainer.allowHeroImage = false;
+        this.hostContainer.allowImages = false;
+
     }
     else{
         this._adaptiveCard.hostConfig = new AdaptiveCards.HostConfig(this.defaultCardConfig);
     }
 
-    if (json["title"] != undefined) {
-        var textBlock = new AdaptiveCards.TextBlock();
-        textBlock.text = json["title"];
-        textBlock.size = 3;
-        textBlock.wrap = true;
-        textBlock.weight = 2;
-        textBlock.spacing = 2;
-        this._adaptiveCard.addItem(textBlock);
+    if(this.hostContainer.allowCardTitle)
+    {
+        if (json["title"] != undefined) {
+            var textBlock = new AdaptiveCards.TextBlock();
+            textBlock.text = json["title"];
+            textBlock.size = 3;
+            textBlock.wrap = true;
+            textBlock.weight = 2;
+            textBlock.spacing = 2;
+            this._adaptiveCard.addItem(textBlock);
+        }
     }
 
     if (json["text"] != undefined) {
@@ -55,6 +63,10 @@ MessageCard.prototype.parse = function (json) {
         var sectionArray = json["sections"];
         for (var i = 0; i < sectionArray.length; i++) {
             var section = parseSection(sectionArray[i], this.hostContainer);
+            if (i == 0)
+            {
+                section.spacing = 2;
+            }
             this._adaptiveCard.addItem(section);
         }
     }
@@ -214,6 +226,7 @@ function parseShowCardAction(json, host) {
     var showCardAction = new AdaptiveCards.ShowCardAction();
     showCardAction.title = json["name"];
     showCardAction.card.actionStyle = "button";
+    showCardAction.id = json["@id"];
     var inputArray = json["inputs"];
     if (inputArray) {
         for (var i = 0; i < inputArray.length; i++) {

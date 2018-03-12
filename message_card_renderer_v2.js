@@ -276,14 +276,31 @@ MessageCardRenderer.prototype.render = function () {
     try{
         console.log("Render entered");
         MessageCardRenderer.extendedMessageCardJson = JSON.parse(getMessageCard());
-        MessageCardRenderer.messageCardJson = JSON.parse(MessageCardRenderer.extendedMessageCardJson['MessageCardSerialized']);
-        var messageCard = new MessageCard(defaultCardConfig, compactCardConfig, this.os);
-        messageCard.parse(MessageCardRenderer.messageCardJson);
-        var renderedCard = messageCard.render();
-        var parent = document.querySelector(this.targetDom);
-        if(parent){
-            parent.innerHTML = '';
-            parent.appendChild(renderedCard);
+        if(MessageCardRenderer.extendedMessageCardJson['MessageCardSerialized'] != null)
+        {
+            MessageCardRenderer.messageCardJson = JSON.parse(MessageCardRenderer.extendedMessageCardJson['MessageCardSerialized']);
+            var messageCard = new MessageCard(defaultCardConfig, compactCardConfig, this.os);
+            messageCard.parse(MessageCardRenderer.messageCardJson);
+            var renderedCard = messageCard.render();
+            var parent = document.querySelector(this.targetDom);
+            if(parent){
+                parent.innerHTML = '';
+                parent.appendChild(renderedCard);
+            }
+        }
+        else if(MessageCardRenderer.extendedMessageCardJson['AdaptiveCardSerialized'] != null)
+        {
+            var adaptiveCardJson = JSON.parse(MessageCardRenderer.extendedMessageCardJson['AdaptiveCardSerialized']);
+            var adaptiveCard = new AdaptiveCards.AdaptiveCard();
+            adaptiveCard.preExpandSingleShowCardAction = true;
+            adaptiveCard.hostConfig = new AdaptiveCards.HostConfig(defaultCardConfig);
+            adaptiveCard.parse(adaptiveCardJson);
+            var renderedCard = adaptiveCard.render();
+            var parent = document.querySelector(this.targetDom);
+            if(parent){
+                parent.innerHTML = '';
+                parent.appendChild(renderedCard);
+            }
         }
 
         var extendedMessageCardJson = JSON.parse(getOriginalMessageCard());
@@ -427,63 +444,13 @@ function buildStatusCard(text, weight, size) {
 
 function onExecuteAction(action) {
     var messageCardRenderer = new MessageCardRenderer();
-    if (action instanceof AdaptiveCards.ShowCardAction){
-        MessageCardRenderer.selectedAction = action;
-        android.executeActionTrial(action);
-        //showCardAction(action);
-    }
-    else if(action instanceof messageCardRenderer.MoreAction){
-        MessageCardRenderer.selectedAction = action;
-        handleMoreActionClick(action);
-    }
-    else if (action instanceof AdaptiveCards.OpenUrlAction) {
-        if(action.url.indexOf("outlook.office.com/connectors") !== -1){
-            MessageCardRenderer.onAuthUrlActionClicked(action.url);
-        }
-        else{
-            MessageCardRenderer.onOpenUrlActionSubmitted(action.url);
-        }
-    }
-    else if (action instanceof AdaptiveCards.HttpAction) {
-
-        var actionPayload = generateActionPayload(action.data, action.id, action);
-
-        if (MessageCardRenderer.onActionSubmitted != null){
-            MessageCardRenderer.onActionSubmitted(JSON.stringify(actionPayload));
-        }
-
-        if(MessageCardRenderer.popupWindow != null)
-        {
-            MessageCardRenderer.popupWindow.close();
-            MessageCardRenderer.popupWindow = null;
-        }
-
-        showWorkingStatus("Working on it...", "https://messagecarddemo.blob.core.windows.net/messagecard/LoadingSpinner.gif");
-
-
-        //MessageCardRenderer.selectedAction.setStatus(buildStatusCard("Working on it..", "normal", "small"));
-    }
+    var potentialAction = this.getSwiftPotentialAction(this.messageCardJson, action.id);
+    android.executeActionTrial(potentialAction);
     var body = document.body;
     var html = document.documentElement;
     var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
     onHeightChange(height);
-    //window.scrollTo(0, document.body.scrollHeight);
-    //scrollToElement("originalBodyContainer");
-
 };
-
-function scrollToElement(id) {
-    var elem = document.getElementById(id);
-    var x = 0;
-    var y = 0;
-
-    while (elem != null) {
-        x += elem.offsetLeft;
-        y += elem.offsetTop;
-        elem = elem.offsetParent;
-    }
-    window.scrollTo(x, y);
-}
 
 function showWorkingStatus(text, url){
     var statusJson = {
@@ -514,7 +481,7 @@ function showWorkingStatus(text, url){
                             {
                                 "type": "Image",
                                 "url": url,
-                                "pixelWidth" : 20
+                                "pixelWidth" : 18
                             }
                         ]
                     }
@@ -676,10 +643,15 @@ function generateActionPayload(inputParameters, actionId, action)
         'actionId' : actionId,
         'potentialAction' : JSON.stringify(getSwiftPotentialAction(MessageCardRenderer.messageCardJson, actionId, action)),
         'messageCardSignature' : MessageCardRenderer.extendedMessageCardJson['MessageCardSignature'],
-        'connectorSenderGuid' : MessageCardRenderer.extendedMessageCardJson['ConnectorSenderGuid'],
         'providerAccountUniqueId' : MessageCardRenderer.extendedMessageCardJson['ProviderAccountUniqueId'],
         'messageCardHash' : MessageCardRenderer.messageCardHash,
-        'clientTelemetry' : {}
+        'clientTelemetry' : {},
+        'connectorSenderGuid' : '00000000-0000-0000-0000-000000000000'
+    }
+
+    if(MessageCardRenderer.extendedMessageCardJson['ConnectorSenderGuid'] != null)
+    {
+        actionPayload['connectorSenderGuid'] = MessageCardRenderer.extendedMessageCardJson['ConnectorSenderGuid']
     }
 
     if(inputParameters != null && Object.keys(inputParameters).length >= 1)
