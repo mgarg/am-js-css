@@ -444,7 +444,9 @@ function buildStatusCard(text, weight, size) {
 
 function onExecuteAction(action) {
     var messageCardRenderer = new MessageCardRenderer();
-    var potentialAction = getSwiftPotentialAction(MessageCardRenderer.messageCardJson, action.id, action);
+    //var potentialAction = getSwiftPotentialAction(MessageCardRenderer.messageCardJson, action.id, action);
+    // todo always taking the first action here
+    var potentialAction = MessageCardRenderer.messageCardJson.potentialAction[0];
     android.executeActionTrial(JSON.stringify(potentialAction));
     var body = document.body;
     var html = document.documentElement;
